@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter {{ chapter_number }} Quiz</title>
+    <style>
+        * {
+            font-family: Tahoma, sans-serif;
+        }
+
+        .quiz-title {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chapter-info {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .question-number {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .answers {
+            margin-left: 20px;
+        }
+
+        .answer {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .answer input {
+            margin-right: 10px;
+        }
+
+        .submit-btn {
+            display: block;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .go-back-btn {
+            display: block;
+            margin-top: 10px;
+            text-align: left;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Chapter Information -->
+    <div class="chapter-info">
+        <h2>Chapter {{ chapter_number }}: {{ chapter_name }}</h2>
+    </div>
+
+    <!-- Quiz Title -->
+    <div class="quiz-title">Quiz for Chapter {{ chapter_number }}</div>
+    
+    <form method="POST" action="{{ url_for('submit_quiz', chapter_number=chapter_number) }}">
+        <div class="questions">
+            {% for question in questions %}
+                <div class="question">
+                    <div class="question-number">Question {{ loop.index }}:</div>
+                    <label>{{ question['question'] }}</label>
+                </div>
+                <div class="answers">
+                    <div class="answer">
+                        <input type="radio" name="question_{{ loop.index }}" value="1" id="q{{ loop.index }}_1"> 
+                        <label for="q{{ loop.index }}_1">{{ question['answer1'] }}</label>
+                    </div>
+                    <div class="answer">
+                        <input type="radio" name="question_{{ loop.index }}" value="2" id="q{{ loop.index }}_2"> 
+                        <label for="q{{ loop.index }}_2">{{ question['answer2'] }}</label>
+                    </div>
+                    <div class="answer">
+                        <input type="radio" name="question_{{ loop.index }}" value="3" id="q{{ loop.index }}_3"> 
+                        <label for="q{{ loop.index }}_3">{{ question['answer3'] }}</label>
+                    </div>
+                    <div class="answer">
+                        <input type="radio" name="question_{{ loop.index }}" value="4" id="q{{ loop.index }}_4"> 
+                        <label for="q{{ loop.index }}_4">{{ question['answer4'] }}</label>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Submit button -->
+        <div class="submit-btn">
+            <button type="submit">Submit Answers</button>
+        </div>
+    </form>
+
+    <!-- Go Back button -->
+    <div class="go-back-btn">
+        <button onclick="goBack()">Go Back</button>
+    </div>
+
+    <script>
+        // Function to handle the "Go Back" button
+        function goBack() {
+            // Show confirmation dialog
+            var result = confirm("Would you like to go back to the Home page?");
+            if (result) {
+                // Redirect to the home page if "Yes" is clicked
+                window.location.href = "/";
+            } else {
+                // Stay on the quiz page if "Stay" is clicked
+                return false;
+            }
+        }
+    </script>
+
+</body>
+</html>

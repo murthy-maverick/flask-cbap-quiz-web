@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        /* Apply Tahoma font to the entire page */
+        * {
+            font-family: Tahoma, sans-serif;
+        }
+
+        /* Center-align the 'CBAP Quiz' title */
+        h1 {
+            text-align: center;
+            font-size: 24px;  /* Optional: Adjust font size if needed */
+        }
+
+        /* Center the image */
+        .header-image {
+            display: block;
+            margin: 0 auto;
+            width: 200px; /* Adjust size as needed */
+        }
+
+        /* Left-align the 'Chapters' title */
+        h2 {
+            text-align: left;
+            margin-left: 20px;  /* Optional: adds a little space from the left edge */
+        /* Center-align the 'Quiz History' title */
+        }
+        .quiz-history-title {
+            text-align: center;
+        }
+
+        /* Style the unordered list to remove bullets and use numbers */
+        ul {
+            list-style-type: decimal; /* This replaces the bullets with numbers */
+            padding-left: 20px; /* Adds some padding for alignment */
+        }
+
+        /* Left-align the chapter names */
+        li {
+            text-align: left; /* Ensures each chapter name is left-aligned */
+            margin-bottom: 10px; /* Adds spacing between items */
+        }
+
+        table {
+            width: auto; /* Allow table width to adjust based on content */
+            margin: 20px auto;
+            border-collapse: collapse;
+            table-layout: auto; /* Default layout ensures columns adjust to content */
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            white-space: nowrap; /* Prevent text wrapping for better auto-fit behavior */
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        td:nth-child(3) {
+            text-align: left; /* Align the Chapter Name column to the left */
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Add the image at the top -->
+    <img src="{{ url_for('static', filename='images/cbap_img.jpg') }}" alt="CBAP Logo" class="header-image">
+
+    <h1>{{ title }}</h1>
+
+    <h2>Chapters</h2>
+    <ul>
+        {% for chapter in chapter_links %}
+            <li><a href="{{ url_for('quiz', chapter_number=chapter.number) }}">{{ chapter.name }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <h2 class="quiz-history-title">Quiz History</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Quiz Date</th>
+                <th>Chapter#</th>
+                <th>Chapter Name</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for score in historical_scores %}
+                <tr>
+                    <td class="quiz-date" data-utc="{{ score.quiz_date }}">{{ score.quiz_date }}</td>
+                    <td>{{ score.chapter_number }}</td>
+                    <td>{{ score.chapter_name }}</td>
+                    <td>{{ score.final_score }}/{{ score.total_questions }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        // JavaScript to convert UTC to IST (Indian Standard Time)
+        document.querySelectorAll('.quiz-date').forEach(function(element) {
+            var utcDate = element.getAttribute('data-utc');
+    
+        // Check if the date is valid
+            if (utcDate) {
+                var localDate = new Date(utcDate);
+                
+                // Ensure the date is valid
+                if (localDate instanceof Date && !isNaN(localDate)) {
+                    var options = { 
+                        timeZone: 'Asia/Kolkata',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: true
+                    };
+                    element.textContent = localDate.toLocaleString('en-IN', options);  
+                } else {
+                    console.error("Invalid date format:", utcDate);
+                }
+            } else {
+                console.error("No UTC date found for element", element);
+            }
+});
+
+    </script>
+</body>
+</html>
